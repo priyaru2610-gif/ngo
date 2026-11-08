@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeriGive - Transparent NGO & Resource Ledger</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+    .step-active { border-color: #059669; color: #059669; background-color: #ecfdf5; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- TOP TRANSPARENCY BAR -->
+  <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 flex justify-between items-center border-b border-slate-800">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Public Audit Ledger: <strong class="text-emerald-400 font-mono">LIVE #0x8F92...C14</strong></span>
+    </div>
+    <div class="flex gap-4">
+      <span>Transparency Score: <strong class="text-white">99.4%</strong></span>
+      <span>Zero Overhead Guarantee</span>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <header class="sticky top-0 z-40 glass border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+      <div class="flex items-center gap-3">
+        <div class="bg-emerald-600 text-white p-2.5 rounded-xl shadow-md">
+          <i class="fa-solid me-1 fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+          <span class="font-bold text-xl tracking-tight text-slate-900">Veri<span class="text-emerald-600">Give</span></span>
+          <span class="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Proof-of-Impact Network</span>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex space-x-1 bg-slate-100 p-1 rounded-xl">
+        <button onclick="switchTab('donor')" id="tab-donor" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition text-emerald-700 bg-white shadow-sm">
+          <i class="fa-solid fa-hand-holding-heart mr-1.5"></i> Donor Portal
+        </button>
+        <button onclick="switchTab('audit')" id="tab-audit" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-magnifying-glass-dollar mr-1.5"></i> Real-Time Audit
+        </button>
+        <button onclick="switchTab('ngo')" id="tab-ngo" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-boxes-stacked mr-1.5"></i> NGO Ops Hub
+        </button>
+      </nav>
+
+      <button onclick="openDonateModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium shadow-md hover:shadow-lg transition flex items-center gap-2 text-sm">
+        <i class="fa-solid fa-bolt"></i> Direct Impact
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- VIEW 1: DONOR PORTAL -->
+    <section id="view-donor" class="space-y-8">
+      <!-- HERO BANNER -->
+      <div class="relative bg-gradient-to-r from-emerald-900 to-slate-900 rounded-3xl p-8 text-white overflow-hidden shadow-2xl">
+        <div class="relative z-10 max-w-2xl">
+          <span class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30">Next-Gen NGO Logistics</span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-3 mb-2">Donate with 100% Verified Proof & Zero Guesswork.</h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">Funds are released to projects only when verifiable field milestones are met. Track your physical resources from pickup to beneficiary handoff.</p>
+        </div>
+      </div>
+
+      <!-- CRITICAL NEEDS WISHLIST -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Verified Emergency Needs</h2>
+            <p class="text-xs text-slate-500">Real-time inventory requirements submitted by audited field teams.</p>
+          </div>
+          <span class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200">
+            <i class="fa-solid fa-rotate text-[10px] mr-1"></i> Syncs live
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="needs-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- ACTIVE MILESTONE-BASED CAMPAIGNS -->
+      <div>
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Milestone-Gated Projects</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="campaigns-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: REAL-TIME AUDIT & PROOF LEDGER -->
+    <section id="view-audit" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Immutable Audit Ledger</h2>
+            <p class="text-sm text-slate-500">Track every dollar and supply package from contribution to final distribution.</p>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="audit-search" oninput="filterAudit()" placeholder="Search by Hash, Donor ID, or Item..." class="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-64">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500 border-y border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Transaction ID</th>
+                <th class="py-3 px-4">Donor/Source</th>
+                <th class="py-3 px-4">Resource / Amount</th>
+                <th class="py-3 px-4">Target Beneficiary</th>
+                <th class="py-3 px-4">Status & Proof</th>
+                <th class="py-3 px-4">Verification</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body" class="divide-y divide-slate-100">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: NGO OPERATIONS HUB -->
+    <section id="view-ngo" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Field Update Submission -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-1">
+          <h3 class="font-bold text-slate-900 text-lg mb-1">Submit Proof of Disbursement</h3>
+          <p class="text-xs text-slate-500 mb-4">Upload evidence to trigger smart contract milestone releases.</p>
+
+          <form id="proof-form" onsubmit="handleProofSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Project Milestone</label>
+              <select id="proof-campaign" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="1">Flood Relief - Phase 1 Water Delivery</option>
+                <option value="2">Rural School Tech - 10 Laptops</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Disbursement Notes</label>
+              <textarea id="proof-notes" required placeholder="Describe delivery details, quantity handed out..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 h-24"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Geotagged Photo Hash / ID</label>
+              <input type="text" id="proof-hash" required placeholder="e.g. IMG_20261104_9921.jpg (Verified)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl shadow transition text-sm">
+              <i class="fa-solid fa-file-contract mr-1"></i> Submit & Claim Funds
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Inventory & Request Dispatch Hub -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-2 space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="font-bold text-slate-900 text-lg">Resource Operations & Dispatch</h3>
+              <p class="text-xs text-slate-500">Match incoming physical donations directly with verified beneficiary needs.</p>
+            </div>
+            <button onclick="openNeedModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-3 py-2 rounded-xl transition">
+              <i class="fa-solid fa-plus mr-1"></i> Log Emergency Need
+            </button>
+          </div>
+
+          <div class="divide-y divide-slate-100" id="ngo-inventory-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DONATION MODAL -->
+  <div id="donate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-5">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="text-xl font-bold text-slate-900">Contribute with Milestone Guarantee</h3>
+        <button onclick="closeDonateModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="flex gap-2 p-1 bg-slate-100 rounded-xl">
+        <button id="btn-type-money" onclick="setDonationType('money')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-emerald-700">Financial (Escrowed)</button>
+        <button id="btn-type-goods" onclick="setDonationType('goods')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600">Physical Supplies</button>
+      </div>
+
+      <!-- FINANCIAL FORM -->
+      <form id="form-money" onsubmit="handleDonateSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Select Campaign</label>
+          <select id="donate-campaign-select" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <!-- Dynamic options -->
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Amount ($)</label>
+          <div class="grid grid-cols-4 gap-2 mb-2">
+            <button type="button" onclick="setAmount(25)" class="py-1.5 border rounded-lg text-xs font-semibold hover:border-emerald-500">$25</button>
+            <button type="button" onclick="setAmount(50)" class="py-1.5 border rounded-lg text-xs font-semibold hover:border-emerald-500">$50</button>
+            <button type="button" onclick="setAmount(100)" class="py-1.5 border rounded-lg text-xs font-semibold hover:border-emerald-500">$100</button>
+            <button type="button" onclick="setAmount(250)" class="py-1.5 border rounded-lg text-xs font-semibold hover:border-emerald-500">$250</button>
+          </div>
+          <input type="number" id="donate-amount" required min="1" value="50" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100 text-xs text-emerald-800 space-y-1">
+          <p class="font-semibold"><i class="fa-solid fa-lock mr-1"></i> Milestone Protection Active</p>
+          <p class="text-emerald-700">Funds remain in transparent escrow and release automatically as field goals pass verification.</p>
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition text-sm">
+          Confirm Escrow Contribution
+        </button>
+      </form>
+
+      <!-- GOODS FORM -->
+      <form id="form-goods" onsubmit="handleGoodsSubmit(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Select Emergency Resource Category</label>
+          <select id="goods-category" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <option value="Clean Water Kits">Clean Water Kits</option>
+            <option value="Medical First Aid">Medical First Aid Kits</option>
+            <option value="Educational Tablets">Educational Tablets</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Quantity Units</label>
+          <input type="number" id="goods-qty" required min="1" value="5" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery / Pickup Option</label>
+          <select id="goods-delivery" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm outline-none">
+            <option value="Drop-off at Hub">Self Drop-off at Regional Hub</option>
+            <option value="Scheduled Courier">Request NGO Courier Pickup</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl shadow-md transition text-sm">
+          Generate Tracking QR & Dispatch
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // INITIAL APP STATE
+    let state = {
+      needs: [
+        { id: 'n1', title: 'Purification Water Packets', category: 'Water', needed: 500, fulfilled: 320, unit: 'Kits', urgent: true },
+        { id: 'n2', title: 'Emergency Bandage Dressings', category: 'Medical', needed: 200, fulfilled: 180, unit: 'Boxes', urgent: false },
+        { id: 'n3', title: 'Solar Powered Study Lamps', category: 'Education', needed: 150, fulfilled: 45, unit: 'Units', urgent: true }
+      ],
+      campaigns: [
+        { id: 'c1', name: 'Coastal Flood Relief 2026', goal: 20000, raised: 14500, currentMilestone: 'Phase 2: Hygiene Kits Distribution', milestoneProgress: 60, status: 'Active' },
+        { id: 'c2', name: 'Rural Digital Classroom Expansion', goal: 12000, raised: 8400, currentMilestone: 'Phase 1: Solar Panel Setup', milestoneProgress: 90, status: 'Active' }
+      ],
+      ledger: [
+        { tx: '0x9B...A12', donor: 'Anonymous Donor', item: '$250.00', target: 'Coastal Flood Relief 2026', status: 'In Escrow', verified: true, time: '10 mins ago' },
+        { tx: '0x4F...C88', donor: 'Elena R.', item: '50 Water Kits', target: 'District 4 Shelter', status: 'Delivered', verified: true, time: '2 hours ago' },
+        { tx: '0x1A...E34', donor: 'Tech Corp NGO Fund', item: '$1,200.00', target: 'Rural Digital Classroom', status: 'Released', verified: true, time: '1 day ago' }
+      ]
+    };
+
+    // TAB SWITCHING LOGIC
+    function switchTab(tab) {
+      document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'shadow-sm', 'text-emerald-700');
+        btn.classList.add('text-slate-600');
+      });
+
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      activeBtn.classList.add('bg-white', 'shadow-sm', 'text-emerald-700');
+      activeBtn.classList.remove('text-slate-600');
+    }
+
+    // RENDER FUNCTIONS
+    function renderNeeds() {
+      const grid = document.getElementById('needs-grid');
+      grid.innerHTML = state.needs.map(n => {
+        const pct = Math.min(100, Math.round((n.fulfilled / n.needed) * 100));
+        return `
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full ${n.urgent ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-100 text-slate-600'}">
+                  ${n.urgent ? 'Urgent Need' : 'Standard Need'}
+                </span>
+                <span class="text-xs text-slate-400 font-mono">${n.category}</span>
+              </div>
+              <h3 class="font-bold text-slate-900">${n.title}</h3>
+              <p class="text-xs text-slate-500 mt-1">${n.fulfilled} of ${n.needed} ${n.unit} received</p>
+            </div>
+            <div class="mt-4">
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-3">
+                <div class="bg-emerald-500 h-full rounded-full" style="width: ${pct}%"></div>
+              </div>
+              <button onclick="openDonateModal('goods')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold py-2 rounded-xl transition">
+                Provide Supplies
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCampaigns() {
+      const grid = document.getElementById('campaigns-grid');
+      const select = document.getElementById('donate-campaign-select');
+      
+      grid.innerHTML = state.campaigns.map(c => {
+        const pct = Math.round((c.raised / c.goal) * 100);
+        return `
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-slate-900 text-lg">${c.name}</h3>
+                <p class="text-xs text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i> Milestone Active</p>
+              </div>
+              <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg">$${c.raised.toLocaleString()} / $${c.goal.toLocaleString()}</span>
+            </div>
+
+            <!-- Milestone Tracker Box -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100 space-y-2">
+              <div class="flex justify-between text-xs">
+                <span class="font-medium text-slate-600">Current Phase:</span>
+                <span class="font-bold text-slate-800">${c.currentMilestone}</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-600 h-full" style="width: ${c.milestoneProgress}%"></div>
+              </div>
+            </div>
+
+            <button onclick="openDonateModal('money')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-sm transition">
+              Fund Next Milestone
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      select.innerHTML = state.campaigns.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    function renderAuditTable() {
+      const body = document.getElementById('audit-table-body');
+      body.innerHTML = state.ledger.map(l => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3 px-4 font-mono text-xs font-semibold text-emerald-700">${l.tx}</td>
+          <td class="py-3 px-4">${l.donor}</td>
+          <td class="py-3 px-4 font-semibold text-slate-900">${l.item}</td>
+          <td class="py-3 px-4">${l.target}</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full ${l.status === 'Delivered' || l.status === 'Released' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+              <span class="w-1.5 h-1.5 rounded-full ${l.status === 'Delivered' || l.status === 'Released' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+              ${l.status}
+            </span>
+          </td>
+          <td class="py-3 px-4">
+            <span class="text-xs text-slate-400"><i class="fa-solid fa-shield text-emerald-500 mr-1"></i> Verified</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderNgoHub() {
+      const list = document.getElementById('ngo-inventory-list');
+      list.innerHTML = state.needs.map(n => `
+        <div class="py-3 flex justify-between items-center">
+          <div>
+            <h4 class="font-bold text-sm text-slate-800">${n.title}</h4>
+            <p class="text-xs text-slate-500">Stock: ${n.fulfilled} / Goal: ${n.needed} ${n.unit}</p>
+          </div>
+          <button onclick="dispatchResource('${n.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+            Dispatch Batch
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // MODAL & FORM HANDLERS
+    function openDonateModal(type = 'money') {
+      document.getElementById('donate-modal').classList.remove('hidden');
+      setDonationType(type);
+    }
+
+    function closeDonateModal() {
+      document.getElementById('donate-modal').classList.add('hidden');
+    }
+
+    function setDonationType(type) {
+      const isMoney = type === 'money';
+      document.getElementById('form-money').classList.toggle('hidden', !isMoney);
+      document.getElementById('form-goods').classList.toggle('hidden', isMoney);
+      
+      document.getElementById('btn-type-money').className = isMoney 
+        ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-emerald-700"
+        : "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600";
+      
+      document.getElementById('btn-type-goods').className = !isMoney 
+        ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm text-emerald-700"
+        : "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600";
+    }
+
+    function setAmount(val) {
+      document.getElementById('donate-amount').value = val;
+    }
+
+    function handleDonateSubmit(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('donate-amount').value);
+      const campId = document.getElementById('donate-campaign-select').value;
+      const campaign = state.campaigns.find(c => c.id === campId);
+
+      if (campaign) {
+        campaign.raised += amount;
+        const newTx = {
+          tx: '0x' + Math.random().toString(16).substr(2, 6).toUpperCase(),
+          donor: 'Verified Supporter',
+          item: `$${amount.toFixed(2)}`,
+          target: campaign.name,
+          status: 'In Escrow',
+          verified: true,
+          time: 'Just now'
+        };
+        state.ledger.unshift(newTx);
+      }
+
+      closeDonateModal();
+      renderCampaigns();
+      renderAuditTable();
+      alert('Thank you! Your donation has been recorded into transparent escrow.');
+    }
+
+    function handleGoodsSubmit(e) {
+      e.preventDefault();
+      const cat = document.getElementById('goods-category').value;
+      const qty = document.getElementById('goods-qty').value;
+
+      const newTx = {
+        tx: '0x' + Math.random().toString(16).substr(2, 6).toUpperCase(),
+        donor: 'In-Kind Supporter',
+        item: `${qty}x ${cat}`,
+        target: 'Regional Hub',
+        status: 'In Transit',
+        verified: true,
+        time: 'Just now'
+      };
+      state.ledger.unshift(newTx);
+
+      closeDonateModal();
+      renderAuditTable();
+      alert('Supply package logged! Tracking ID and pickup schedule generated.');
+    }
+
+    function handleProofSubmit(e) {
+      e.preventDefault();
+      const notes = document.getElementById('proof-notes').value;
+      alert(`Milestone proof submitted successfully! Field notes logged: "${notes}". Escrow funds requested.`);
+      document.getElementById('proof-form').reset();
+    }
+
+    function dispatchResource(id) {
+      const item = state.needs.find(n => n.id === id);
+      if (item && item.fulfilled > 0) {
+        item.fulfilled = Math.max(0, item.fulfilled - 10);
+        renderNeeds();
+        renderNgoHub();
+        alert(`Dispatched 10 units of ${item.title} to field location.`);
+      }
+    }
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      renderNeeds();
+      renderCampaigns();
+      renderAuditTable();
+      renderNgoHub();
+    });
+  </script>
+</body>
+</html>
